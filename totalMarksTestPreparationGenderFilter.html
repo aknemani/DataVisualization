@@ -2,11 +2,9 @@
 <html lang="en"> 
 <head>
 <meta charset="utf-8">
-<title>Maths and English Comparison for Diff Parent's Education</title>
+<title>Impact of Preparation On Score</title>
 <script src="https://d3js.org/d3.v4.js"></script>
-<!-- Color Scale -->
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-
 <style>
         body {
             font: 15px sans-serif;
@@ -32,29 +30,30 @@
         }
 		.legend {                                                 
         font-size: 12px;                                          
-      }
+      }                                          
          </style>
 </head>
 
 <body>
 <!-- Initialize a select button -->
-<p><font size = "5px"><b>Maths and English Comparison for Diff Parent's Education</b></font></p>
-<p><b><font color = "172E8E">Parent's Education: <select id="selectButton"></select></font></b></p><!-- Create a div where the graph will take place -->
+<p><font size = "5px"><b>Impact of Preparation On Score</b></font></p>
+<p><b><font color = "172E8E">Gender: <select id="selectButton"></select></font></b></p><!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
 <P></P>
 <b><font color = red> Go To: </font></b>
 [<a href='index.html'><b>Main</b></a>]
 [<a href='mathsEnglishGender.html'><b> 1 </b></a>]
-[<font color = red><b> 2 </b></font>]
-<!--[<a href='mathsEnglishParentEdu.html'><b> 2 </b></a>]-->
+[<a href='mathsEnglishParentEdu.html'><b> 2 </b></a>]
 [<a href='mathsEnglishEthnicity.html'><b> 3 </b></a>]
 [<a href='totalMarksParentEducationGenderFilter.html'> <b> 4 </b></a>]
 [<a href='totalMarksEthnicityGenderFilter.html'><b> 5 </b></a>]
-[<a href='totalMarksTestPreparationGenderFilter.html'><b> 6 </b></a>]
+[<font color = red><b> 6 </b></font>]
+<!--[<a href='totalMarksTestPreparationGenderFilter.html'><b> 6 </b></a>]-->
+
 
 <script>
 
-  var data;
+var data;
   var allGroup;
   var myColor
   var x
@@ -66,14 +65,13 @@
   var margin = {top: 10, right: 30, bottom: 30, left: 60},
     width = 460 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
-    
-function tipMouseover(d) {
+
+  function tipMouseover(d) {
     var color = "red";//colorScale(d.manufacturer);
     var html  = d.gender + "<br/>" +
-      "<b>" + d.mathScore + "</b> Math, <b/>" 
-      + d.readingScore  + "</b> Reading, <b/>"
-      + d.writingScore  + "</b> Writing, <b/>"
-      + d.parentalLevelOfEducation + "</b> Parental Education";
+      "<b>" + d.mathScore + "</b> Math, <b>"
+            + d.readingScore + "</b> Reading, <b>"
+      + d.writingScore + "</b> Writing";
 
       tooltip.html(html)
         .style("left", (d3.event.pageX + 15) + "px")
@@ -84,27 +82,17 @@ function tipMouseover(d) {
   };
 
   // tooltip mouseout event handler
-function tipMouseout(d) {
+  function tipMouseout(d) {
     tooltip.transition()
       .duration(300) // ms
       .style("opacity", 0); // don't care about position!
   };
-  
-  function drawLine(){
-    svg.append('line')
-  .attr('x1', 0)
-  .attr('y1', height)
-  .attr('x2', width)
-  .attr('y2', 0)
-  .attr('stroke', 'purple')
-  .attr('stroke-width', "2")
-}
 
-  function createLegend(){
+function createLegend(){
         var legendradius = 5;                                  
         var legendSpacing = 4; 
     
-     var newGroup = d3.map(data, function(d){return(d.parentalLevelOfEducation)}).keys().sort();
+     var newGroup = d3.map(data, function(d){return(d.gender)}).keys().sort();
     console.log(newGroup.length);
 
       var legend = svg.selectAll('.legend')                     
@@ -115,8 +103,8 @@ function tipMouseout(d) {
           .attr('transform', function(d, i) {                     
             var height = legendradius*2 + legendSpacing;         
             var offset =  height * newGroup.length / 2;     
-            var horz = 30;                      
-            var vert = i * height - offset+50;                       
+            var horz = width-50;                      
+            var vert = i * height - offset+15;                       
             return 'translate(' + horz + ',' + vert + ')';        
           });                                                    
 
@@ -131,11 +119,18 @@ function tipMouseout(d) {
           .attr('y', legendradius )              
           .text(function(d) { return d; });                       
 }
-   // A function that update the chart
-function update(selectedGroup) {
-      // Create new data with the selection?
-      
-      var dataFilter = data.filter(function(d){return d.parentalLevelOfEducation==selectedGroup})
+function drawLine(){
+    svg.append('line')
+  .attr('x1', 0)
+  .attr('y1', height/2)
+  .attr('x2', width)
+  .attr('y2', height/2)
+  .attr('stroke', 'purple')
+  .attr('stroke-width', "2")
+}
+  // A function that update the chart
+  function update(selectedGroup) {
+    var dataFilter = data.filter(function(d){return d.gender==selectedGroup})
       svg
       .append('g')
         .selectAll('circle')
@@ -145,18 +140,17 @@ function update(selectedGroup) {
         .attr('cx', function(d){return 0;})
         .attr('r', function(d){return Number(0);})
         .attr('cy', function(d){return height;})
-        .style("fill", myColor(selectedGroup))
-        .style("stroke", 'black')
+        .style("fill",  'none')  
+        .style("stroke", myColor(selectedGroup))
         .on("mouseover", tipMouseover)
-        .on("mouseout", tipMouseout)
+      .on("mouseout", tipMouseout)
         .transition().duration(1000)
-        .attr('cx', function(d){return x(d.mathScore);})
+        .attr('cy', function(d){return y(Number(d.mathScore) + Number(d.readingScore) + Number(d.writingScore));})
         .attr("r", function(d,i) { return 5; })
-        .attr('cy', function(d){return y(Number(d.readingScore)+Number(d.writingScore));})
-
-    }
-    
-function init() {
+        .attr('cx', function(d){return x(d.testPreparationCourse);})
+  }
+  
+    function init() {
     // append the svg object to the body of the page
     canvas  = d3.select("#my_dataviz")
       .append("svg")
@@ -172,7 +166,7 @@ function init() {
       .style("opacity", 0);
 
     // List of groups (here I have one group per column)
-     allGroup = d3.map(data, function(d){return(d.parentalLevelOfEducation)}).keys()
+    allGroup = d3.map(data, function(d){return(d.gender)}).keys()
     allGroup.push('All')
     allGroup.sort()
     // add the options to the button
@@ -183,6 +177,7 @@ function init() {
     	.append('option')
       .text(function (d) { return d; }) // text showed in the menu
       .attr("value", function (d) { return d; }) // corresponding value returned by the button
+      
 
     // A color scale: one color for each group
     myColor = d3.scaleOrdinal()
@@ -190,33 +185,35 @@ function init() {
       .range(d3.schemeSet2);
 
     // Add X axis --> it is a date format
-    x = d3.scaleLinear()
-      .domain([0, 100])
-      .range([ 0, width]);
+    x = d3.scaleOrdinal()
+      .domain(['.', '.', 'none', 'completed', '.', '.'])
+      .range([0, width/5, width*2/5, width*3/5, width*4/5, width])
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x).ticks(10));
+      .call(d3.axisBottom(x));
 
     // Add Y axis
     y = d3.scaleLinear()
-      .domain([0, 200])
-      .range([height, 0]);
+      .domain([0, 300])
+      .range([ height, 0]);
+
     svg.append("g")
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y).ticks(10))
+
       
       		svg.append("text")             
 		.attr("transform", "translate(" + (width/2) + " ," + (height+30) + ")")
 		.style("text-anchor", "middle")
-		.text("Maths Score");
+		.text("Preparation");
       
 		svg.append("text")             
-		.attr("transform", "translate(" + (-25) + " ," + (height/2) + ") rotate(-90)")
+		.attr("transform", "translate(" + (-25) + " ," + (height/2 - 20) + ") rotate(-90)")
 		.style("text-anchor", "middle")
-		.text("Reading And Writing Score");
+		.text("Total Score");
 
   }
   
-  function loadWithAll() {
+    function loadWithAll() {
       allGroup.forEach(function(element) {
               console.log(element);
               selectedOption = element;
@@ -251,18 +248,17 @@ function createTextLine2(texToShowLine2)
         .style("fill", "purple")
         .text(texToShowLine2);
 }
-
 //Read the data
 d3.csv("https://raw.githubusercontent.com/aknemani/DataVisualization/master/exams1000.csv", function(d) {
     data = d
 
     init();
-    loadWithAll();
     //update(allGroup[0])
+    loadWithAll();
 createLegend();
 drawLine();
 createTextLine1("Note:")
-    createTextLine2("Usually better English, Associate most balanced")
+    createTextLine2("Training improved overall score")
     // When the button is changed, run the updateChart function
     d3.select("#selectButton").on("change", function(d) {
         canvas.selectAll('circle').remove();
@@ -274,25 +270,17 @@ createTextLine1("Note:")
               selectedOption = element;
               update(selectedOption);
             });
-            drawLine();
+			drawLine();
             createTextLine1("Note:")
-    createTextLine2("Usually better English Score, Associate most balanced")
+			createTextLine2("Training improved overall score")
         }
         // run the updateChart function with this selected option
         else
         {
            update(selectedOption);
-           drawLine();
+		   drawLine();
            createTextLine1("Note:")
-           if(selectedOption == 'associates')
-           {
-            createTextLine2(selectedOption + " has more balanced score")
-           }
-           else
-           {
-               createTextLine2(selectedOption + " follows the trend")
-           }
-           
+			createTextLine2(selectedOption + " shows similar trend")
         }
     })
 

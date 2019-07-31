@@ -2,11 +2,10 @@
 <html lang="en"> 
 <head>
 <meta charset="utf-8">
-<title>Maths and English Comparison for Diff Parent's Education</title>
+<title>Maths and English Comparison for Different Ethnicity</title>
 <script src="https://d3js.org/d3.v4.js"></script>
 <!-- Color Scale -->
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-
 <style>
         body {
             font: 15px sans-serif;
@@ -38,16 +37,16 @@
 
 <body>
 <!-- Initialize a select button -->
-<p><font size = "5px"><b>Maths and English Comparison for Diff Parent's Education</b></font></p>
-<p><b><font color = "172E8E">Parent's Education: <select id="selectButton"></select></font></b></p><!-- Create a div where the graph will take place -->
+<p><font size = "5px"><b>Maths and English Comparison for Different Ethnicity</b></font></p>
+<p><b><font color = "172E8E">Ethnicity: <select id="selectButton"></select></font></b></p><!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
 <P></P>
 <b><font color = red> Go To: </font></b>
 [<a href='index.html'><b>Main</b></a>]
 [<a href='mathsEnglishGender.html'><b> 1 </b></a>]
-[<font color = red><b> 2 </b></font>]
-<!--[<a href='mathsEnglishParentEdu.html'><b> 2 </b></a>]-->
-[<a href='mathsEnglishEthnicity.html'><b> 3 </b></a>]
+[<a href='mathsEnglishParentEdu.html'><b> 2 </b></a>]
+[<font color = red><b> 3 </b></font>]
+<!--[<a href='mathsEnglishEthnicity.html'><b> 3 </b></a>]-->
 [<a href='totalMarksParentEducationGenderFilter.html'> <b> 4 </b></a>]
 [<a href='totalMarksEthnicityGenderFilter.html'><b> 5 </b></a>]
 [<a href='totalMarksTestPreparationGenderFilter.html'><b> 6 </b></a>]
@@ -104,8 +103,9 @@ function tipMouseout(d) {
         var legendradius = 5;                                  
         var legendSpacing = 4; 
     
-     var newGroup = d3.map(data, function(d){return(d.parentalLevelOfEducation)}).keys().sort();
-    console.log(newGroup.length);
+     var newGroup = d3.map(data, function(d){return(d.ethnicity
+)}).keys().sort();
+    //console.log(newGroup.length);
 
       var legend = svg.selectAll('.legend')                     
           .data(newGroup)                                  
@@ -135,7 +135,8 @@ function tipMouseout(d) {
 function update(selectedGroup) {
       // Create new data with the selection?
       
-      var dataFilter = data.filter(function(d){return d.parentalLevelOfEducation==selectedGroup})
+      var dataFilter = data.filter(function(d){return d.ethnicity
+==selectedGroup})
       svg
       .append('g')
         .selectAll('circle')
@@ -172,7 +173,8 @@ function init() {
       .style("opacity", 0);
 
     // List of groups (here I have one group per column)
-     allGroup = d3.map(data, function(d){return(d.parentalLevelOfEducation)}).keys()
+     allGroup = d3.map(data, function(d){return(d.ethnicity
+)}).keys()
     allGroup.push('All')
     allGroup.sort()
     // add the options to the button
@@ -218,7 +220,7 @@ function init() {
   
   function loadWithAll() {
       allGroup.forEach(function(element) {
-              console.log(element);
+              //console.log(element);
               selectedOption = element;
               update(selectedOption);
             });
@@ -262,7 +264,7 @@ d3.csv("https://raw.githubusercontent.com/aknemani/DataVisualization/master/exam
 createLegend();
 drawLine();
 createTextLine1("Note:")
-    createTextLine2("Usually better English, Associate most balanced")
+    createTextLine2("On Average English Score is Better Than Maths")
     // When the button is changed, run the updateChart function
     d3.select("#selectButton").on("change", function(d) {
         canvas.selectAll('circle').remove();
@@ -270,13 +272,13 @@ createTextLine1("Note:")
         if(selectedOption == 'All') 
         {
             allGroup.forEach(function(element) {
-              console.log(element);
+              //console.log(element);
               selectedOption = element;
               update(selectedOption);
             });
             drawLine();
             createTextLine1("Note:")
-    createTextLine2("Usually better English Score, Associate most balanced")
+            createTextLine2("On Average English Score is Better Than Maths")
         }
         // run the updateChart function with this selected option
         else
@@ -284,15 +286,15 @@ createTextLine1("Note:")
            update(selectedOption);
            drawLine();
            createTextLine1("Note:")
-           if(selectedOption == 'associates')
+           if(selectedOption == 'group E')
            {
-            createTextLine2(selectedOption + " has more balanced score")
+                createTextLine2(selectedOption + " have more balanced average")
            }
            else
            {
-               createTextLine2(selectedOption + " follows the trend")
+               createTextLine2(selectedOption + " showing similar trend as average")
+
            }
-           
         }
     })
 
